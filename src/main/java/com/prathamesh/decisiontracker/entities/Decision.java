@@ -29,6 +29,8 @@ public class Decision {
     private int score;
     private int reviewAfterDays;
 
+    public Decision(){}
+
     public Decision(int id,String title, String description, Date decisionDate, String expectedOutcome, String actualOutCome, int score, int reviewAfterDays) {
         this.decisionId = id;
         this.title = title;
