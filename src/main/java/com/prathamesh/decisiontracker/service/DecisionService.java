@@ -1,18 +1,17 @@
 package com.prathamesh.decisiontracker.service;
 
-import com.prathamesh.decisiontracker.entities.Decision;
-import com.prathamesh.decisiontracker.entities.User;
-import com.prathamesh.decisiontracker.repository.DecisionRepository;
-import com.prathamesh.decisiontracker.repository.UserRepository;
+import com.prathamesh.decisiontracker.dto.DecisionDTO;
 
 import java.util.List;
 
-public interface DecisionService  {
+public interface DecisionService {
 
+    public List<DecisionDTO> getDecisions();
 
-    public List<Decision>getDecisions();
+    public void addDecisions(DecisionDTO decisionDTO) throws Exception;
 
-    public void addDecisions(Decision decision) throws Exception;
+    void updateDecision(DecisionDTO decisionDTO) throws Exception;
 
-    void updateDecision(Decision decision) throws Exception;
+    void deleteDecision(Integer decisionId) throws Exception;
+
 }
