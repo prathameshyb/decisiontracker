@@ -5,9 +5,11 @@ import com.prathamesh.decisiontracker.repository.UserRepository;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
+@EntityScan("com.prathamesh.decisiontracker.entities")
 public class DecisiontrackerApplication {
 
 	 static void main(String[] args) {

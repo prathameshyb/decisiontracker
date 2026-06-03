@@ -1,8 +1,9 @@
 package com.prathamesh.decisiontracker.mvc;
 
-import com.prathamesh.decisiontracker.dto.DecisionDTO;
-import com.prathamesh.decisiontracker.dto.UserDTO;
+import com.prathamesh.decisiontracker.dto.*;
+import com.prathamesh.decisiontracker.exception.ResourceNotFoundException;
 import com.prathamesh.decisiontracker.service.DecisionService;
+import com.prathamesh.decisiontracker.service.TagService;
 import com.prathamesh.decisiontracker.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,11 +20,14 @@ public class DecisionTrackerRESTController {
     @Autowired
     private final UserService userService;
 
+    @Autowired
+    private final TagService tagService;
 
 
-    public DecisionTrackerRESTController(DecisionService decisionService, UserService userService){
+    public DecisionTrackerRESTController(DecisionService decisionService, UserService userService, TagService tagService){
         this.decisionService = decisionService;
         this.userService = userService;
+        this.tagService = tagService;
     }
 
     @GetMapping("/users")
@@ -33,14 +37,14 @@ public class DecisionTrackerRESTController {
 
     @PostMapping("/user")
     @ResponseStatus(HttpStatus.CREATED)
-    public void newUser(@RequestBody UserDTO newUserDTO) throws Exception {
+    public void newUser(@RequestBody CreateUserDTO newUserDTO) throws Exception {
         userService.addUser(newUserDTO);
     }
 
     @PutMapping("/user")
     @ResponseStatus(HttpStatus.OK)
-    public void updateUser(@RequestBody UserDTO userDTO) throws Exception {
-        userService.updateUser(userDTO);
+    public void updateUser(@RequestBody UpdateUserDTO updateUserDTO) throws Exception {
+        userService.updateUser(updateUserDTO);
     }
 
     @DeleteMapping("/users")
@@ -58,14 +62,14 @@ public class DecisionTrackerRESTController {
 
     @PostMapping("/decision")
     @ResponseStatus(HttpStatus.CREATED)
-    public void newDecision(@RequestBody DecisionDTO newDecisionDTO) throws Exception {
+    public void newDecision(@RequestBody CreateDecisionDTO newDecisionDTO) throws Exception {
         decisionService.addDecisions(newDecisionDTO);
     }
 
     @PutMapping("/decision")
     @ResponseStatus(HttpStatus.OK)
-    public void updateDecision(@RequestBody DecisionDTO decisionDTO) throws Exception{
-        decisionService.updateDecision(decisionDTO);
+    public void updateDecision(@RequestBody UpdateDecisionDTO updateDecisionDTO) throws Exception{
+        decisionService.updateDecision(updateDecisionDTO);
     }
 
     @DeleteMapping("/decisions")
@@ -75,4 +79,48 @@ public class DecisionTrackerRESTController {
             decisionService.deleteDecision(decisionId);
         }
     }
+
+    @GetMapping("/tags")
+    List<TagDTO> getTags(){
+        return tagService.getTags();
+    }
+
+    @PostMapping("/tag")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void newTag(@RequestBody CreateTagDTO newTagDTO) throws Exception {
+        tagService.addTag(newTagDTO);
+    }
+
+    @PutMapping("/tag")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateTag(@RequestBody UpdateTagDTO updateTagDTO) throws Exception {
+        tagService.updateTag(updateTagDTO);
+    }
+
+    @DeleteMapping("/tags")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteTags(@RequestBody List<Integer> tagIds) throws Exception {
+        for(Integer tagId : tagIds) {
+            tagService.deleteTag(tagId);
+        }
+    }
+
+    @PostMapping("/userDecisions/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void setUserDecisions(@PathVariable(name = "userId", required = true)Integer userId,@RequestBody List<Integer> decisionIds) throws Exception{
+        if(userService.getUserById(userId)==null){
+            throw new ResourceNotFoundException("User", userId);
+        }
+        userService.setUserDecisions(userId, decisionIds);
+    }
+
+    @GetMapping("/userDecisions/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DecisionDTO> getUserDecisions(@PathVariable(name = "userId", required = true)Integer userId) throws Exception{
+        if(userService.getUserById(userId)==null){
+            throw new ResourceNotFoundException("User", userId);
+        }
+        return userService.getUserDecisions(userId);
+    }
+
 }

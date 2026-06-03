@@ -1,22 +1,8 @@
-package com.prathamesh.decisiontracker.entities;
-
-import jakarta.persistence.*;
+package com.prathamesh.decisiontracker.dto;
 
 import java.util.Date;
 
-@Entity
-public class Decision {
-
-    public int getDecisionId() {
-        return decisionId;
-    }
-
-    public void setDecisionId(int decisionId) {
-        this.decisionId = decisionId;
-    }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class UpdateDecisionDTO {
     private int decisionId;
     private String title;
     private String description;
@@ -26,32 +12,12 @@ public class Decision {
     private int score;
     private int reviewAfterDays;
 
-    @ManyToOne
-    @JoinColumn(name = "userId", referencedColumnName = "userId")
-    private User user;
-
-
-    public User getUser() {
-        return user;
+    public int getDecisionId() {
+        return decisionId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-
-
-    public Decision(){}
-
-    public Decision(int id,String title, String description, Date decisionDate, String expectedOutcome, String actualOutCome, int score, int reviewAfterDays) {
-        this.decisionId = id;
-        this.title = title;
-        this.description = description;
-        this.decisionDate = decisionDate;
-        this.expectedOutcome = expectedOutcome;
-        this.actualOutCome = actualOutCome;
-        this.score = score;
-        this.reviewAfterDays = reviewAfterDays;
+    public void setDecisionId(int decisionId) {
+        this.decisionId = decisionId;
     }
 
     public String getTitle() {
@@ -110,3 +76,4 @@ public class Decision {
         this.reviewAfterDays = reviewAfterDays;
     }
 }
+

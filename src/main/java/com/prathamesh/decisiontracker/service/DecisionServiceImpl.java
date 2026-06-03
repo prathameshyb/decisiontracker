@@ -1,7 +1,9 @@
 package com.prathamesh.decisiontracker.service;
 
+import com.prathamesh.decisiontracker.dto.CreateDecisionDTO;
 import com.prathamesh.decisiontracker.dto.DecisionDTO;
 import com.prathamesh.decisiontracker.dto.DecisionMapper;
+import com.prathamesh.decisiontracker.dto.UpdateDecisionDTO;
 import com.prathamesh.decisiontracker.entities.Decision;
 import com.prathamesh.decisiontracker.exception.DuplicateEntryException;
 import com.prathamesh.decisiontracker.exception.ResourceNotFoundException;
@@ -32,8 +34,14 @@ public class DecisionServiceImpl implements DecisionService {
     }
 
     @Override
-    public void addDecisions(DecisionDTO decisionDTO) throws Exception {
-        Decision decision = decisionMapper.toEntity(decisionDTO);
+    public DecisionDTO getDecisionById(int decisionId) throws Exception {
+        Decision decision = decisionRepository.findById(decisionId).orElseThrow(() -> new ResourceNotFoundException("Decision", decisionId));
+        return decisionMapper.toDTO(decision);
+    }
+
+    @Override
+    public void addDecisions(CreateDecisionDTO createDecisionDTO) throws Exception {
+        Decision decision = decisionMapper.toEntity(createDecisionDTO);
         if (decisionRepository.existsByTitle(decision.getTitle())) {
             throw new DuplicateEntryException("Title must be unique");
         }
@@ -41,11 +49,10 @@ public class DecisionServiceImpl implements DecisionService {
     }
 
     @Override
-    public void updateDecision(DecisionDTO decisionDTO) throws Exception {
-        Decision updateDecision = decisionRepository.findById(decisionDTO.getDecisionId())
-                .orElseThrow(() -> new ResourceNotFoundException("Decision", decisionDTO.getDecisionId()));
-        Decision decision = decisionMapper.toEntity(decisionDTO);
-        decision.setDecisionId(decisionDTO.getDecisionId());
+    public void updateDecision(UpdateDecisionDTO updateDecisionDTO) throws Exception {
+        Decision updateDecision = decisionRepository.findById(updateDecisionDTO.getDecisionId())
+                .orElseThrow(() -> new ResourceNotFoundException("Decision", updateDecisionDTO.getDecisionId()));
+        Decision decision = decisionMapper.toEntity(updateDecisionDTO);
         decisionRepository.save(decision);
     }
 
