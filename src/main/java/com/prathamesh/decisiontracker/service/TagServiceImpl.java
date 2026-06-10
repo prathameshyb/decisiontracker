@@ -1,9 +1,6 @@
 package com.prathamesh.decisiontracker.service;
 
-import com.prathamesh.decisiontracker.dto.CreateTagDTO;
-import com.prathamesh.decisiontracker.dto.TagDTO;
-import com.prathamesh.decisiontracker.dto.TagMapper;
-import com.prathamesh.decisiontracker.dto.UpdateTagDTO;
+import com.prathamesh.decisiontracker.dto.*;
 import com.prathamesh.decisiontracker.entities.Tag;
 import com.prathamesh.decisiontracker.exception.DuplicateEntryException;
 import com.prathamesh.decisiontracker.exception.ResourceNotFoundException;
@@ -22,15 +19,24 @@ public class TagServiceImpl implements TagService {
 
     private final TagMapper tagMapper;
 
-    public TagServiceImpl(TagRepository tagRepository, TagMapper tagMapper) {
+    private final DecisionMapper decisionMapper;
+
+    public TagServiceImpl(TagRepository tagRepository, TagMapper tagMapper, DecisionMapper decisionMapper) {
         this.tagRepository = tagRepository;
         this.tagMapper = tagMapper;
+        this.decisionMapper = decisionMapper;
     }
 
     @Override
     public List<TagDTO> getTags() {
         List<Tag> tags = tagRepository.findAll();
         return tags.stream().map(tagMapper::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public TagDTO getTagById(Integer tagId) throws Exception {
+        Tag tag = tagRepository.findById(tagId).orElseThrow(() -> new ResourceNotFoundException("Tag", tagId));
+        return tagMapper.toDTO(tag);
     }
 
     @Override
@@ -55,5 +61,11 @@ public class TagServiceImpl implements TagService {
         Tag tag = tagRepository.findById(tagId)
                 .orElseThrow(() -> new ResourceNotFoundException("Tag", tagId));
         tagRepository.delete(tag);
+    }
+
+    @Override
+    public List<DecisionDTO> getTagDecisions(Integer tagId) throws Exception {
+        Tag tag = tagRepository.findById(tagId).orElseThrow(() -> new ResourceNotFoundException("Tag", tagId));
+        return tag.getDecisions().stream().map(decisionMapper::toDTO).toList();
     }
 }

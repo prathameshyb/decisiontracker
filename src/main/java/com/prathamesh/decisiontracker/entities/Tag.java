@@ -2,6 +2,8 @@ package com.prathamesh.decisiontracker.entities;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "tags")
 public class Tag {
@@ -10,6 +12,18 @@ public class Tag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int tagId;
     private String tagName;
+
+    public List<Decision> getDecisions() {
+        return decisions;
+    }
+
+    public void setDecisions(List<Decision> decisions) {
+        this.decisions = decisions;
+    }
+
+    @ManyToMany(mappedBy = "tags")
+    List<Decision>decisions;
+
 
     public Tag(){}
 

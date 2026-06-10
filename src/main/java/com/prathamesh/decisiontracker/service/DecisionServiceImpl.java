@@ -1,16 +1,18 @@
 package com.prathamesh.decisiontracker.service;
 
-import com.prathamesh.decisiontracker.dto.CreateDecisionDTO;
-import com.prathamesh.decisiontracker.dto.DecisionDTO;
-import com.prathamesh.decisiontracker.dto.DecisionMapper;
-import com.prathamesh.decisiontracker.dto.UpdateDecisionDTO;
+import com.prathamesh.decisiontracker.dto.*;
 import com.prathamesh.decisiontracker.entities.Decision;
+import com.prathamesh.decisiontracker.entities.Tag;
 import com.prathamesh.decisiontracker.exception.DuplicateEntryException;
 import com.prathamesh.decisiontracker.exception.ResourceNotFoundException;
 import com.prathamesh.decisiontracker.repository.DecisionRepository;
+import com.prathamesh.decisiontracker.repository.TagRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,9 +24,21 @@ public class DecisionServiceImpl implements DecisionService {
 
     private final DecisionMapper decisionMapper;
 
-    public DecisionServiceImpl(DecisionRepository decisionRepository, DecisionMapper decisionMapper) {
+    private final TagService tagService;
+
+    private final TagRepository tagRepository;
+
+    private final TagMapper tagMapper;
+
+//    @PersistenceContext
+//    EntityManager entityManager;
+
+    public DecisionServiceImpl(DecisionRepository decisionRepository, DecisionMapper decisionMapper, TagService tagService, TagRepository tagRepository, TagMapper tagMapper) {
         this.decisionRepository = decisionRepository;
         this.decisionMapper = decisionMapper;
+        this.tagService = tagService;
+        this.tagRepository = tagRepository;
+        this.tagMapper = tagMapper;
     }
 
     @Override
@@ -50,8 +64,6 @@ public class DecisionServiceImpl implements DecisionService {
 
     @Override
     public void updateDecision(UpdateDecisionDTO updateDecisionDTO) throws Exception {
-        Decision updateDecision = decisionRepository.findById(updateDecisionDTO.getDecisionId())
-                .orElseThrow(() -> new ResourceNotFoundException("Decision", updateDecisionDTO.getDecisionId()));
         Decision decision = decisionMapper.toEntity(updateDecisionDTO);
         decisionRepository.save(decision);
     }
@@ -61,5 +73,25 @@ public class DecisionServiceImpl implements DecisionService {
         Decision decision = decisionRepository.findById(decisionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Decision", decisionId));
         decisionRepository.delete(decision);
+    }
+
+    @Override
+    public void setDecisionTags(Integer decisionId, List<Integer>tagIds) throws Exception {
+    Decision decision = decisionRepository.findById(decisionId).orElseThrow(() -> new ResourceNotFoundException("Decision", decisionId));
+    List<Tag>decisionTags = new ArrayList<>();
+    for(Integer tagId: tagIds){
+        if(tagService.getTagById(tagId) == null){
+            throw new ResourceNotFoundException("Tag", tagId);
+        }
+        decisionTags.add(tagRepository.findById(tagId).orElseThrow(() -> new ResourceNotFoundException("Tag", tagId)));
+    }
+    decision.setDecisionTags(decisionTags);
+    decisionRepository.save(decision);
+    }
+
+    @Override
+    public List<TagDTO> getDecisionTags(Integer decisionId) {
+        Decision decision = decisionRepository.findById(decisionId).orElseThrow(() -> new ResourceNotFoundException("Decision", decisionId));
+        return decision.getDecisionTags().stream().map(tagMapper::toDTO).toList();
     }
 }

@@ -47,21 +47,16 @@ public class UserServiceImpl implements UserService{
     public void getDecisionsForUser(int userId){
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", userId));
         System.out.println(user.getDecisionList());
-
     }
 
     @Override
     public void setUserDecisions(int userId, List<Integer> decisionIds) throws Exception {
         User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", userId));
-        List<Decision> userDecisions = new java.util.ArrayList<>(List.of());
         for (Integer decisionId : decisionIds) {
             Decision decision = decisionRepository.findById(decisionId).orElseThrow(() -> new ResourceNotFoundException("Decision", decisionId));
-            userDecisions.add(decision);
             decision.setUser(user);
+            decisionRepository.save(decision);
         }
-        user.setDecisionList(userDecisions);
-
-        userRepository.save(user);
     }
 
     @Override

@@ -123,4 +123,30 @@ public class DecisionTrackerRESTController {
         return userService.getUserDecisions(userId);
     }
 
+    @PostMapping("/decisionTags/{decisionId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void setDecisionTags(@PathVariable (name = "decisionId", required = true)Integer decisionId, @RequestBody List<Integer> tagIds) throws Exception{
+        if(decisionService.getDecisionById(decisionId) == null){
+            throw new ResourceNotFoundException("Decision", decisionId);
+        }
+        decisionService.setDecisionTags(decisionId, tagIds);
+    }
+
+    @GetMapping("/decisionTags/{decisionId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<TagDTO> getDecisionTags(@PathVariable(name = "decisionId", required = true)Integer decisionId) throws Exception{
+        if(decisionService.getDecisionById(decisionId)==null){
+            throw new ResourceNotFoundException("Decision", decisionId);
+        }
+        return decisionService.getDecisionTags(decisionId);
+    }
+
+    @GetMapping("/tagDecisions/{tagId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DecisionDTO> getTagDecisions(@PathVariable(name = "tagId", required = true)Integer tagId) throws Exception{
+        if(tagService.getTagById(tagId) == null){
+            throw new ResourceNotFoundException("Tag", tagId);
+        }
+        return tagService.getTagDecisions(tagId);
+    }
 }

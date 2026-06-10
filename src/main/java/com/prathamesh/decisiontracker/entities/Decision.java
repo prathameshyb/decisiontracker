@@ -3,6 +3,7 @@ package com.prathamesh.decisiontracker.entities;
 import jakarta.persistence.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Decision {
@@ -30,6 +31,17 @@ public class Decision {
     @JoinColumn(name = "userId", referencedColumnName = "userId")
     private User user;
 
+    public List<Tag> getDecisionTags() {
+        return tags;
+    }
+
+    public void setDecisionTags(List<Tag> tags) {
+        this.tags = tags;
+    }
+
+    @ManyToMany
+    @JoinTable(name = "decision_tags", joinColumns = @JoinColumn(name = "decision_id") , inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private List<Tag> tags;
 
     public User getUser() {
         return user;
@@ -38,8 +50,6 @@ public class Decision {
     public void setUser(User user) {
         this.user = user;
     }
-
-
 
     public Decision(){}
 
