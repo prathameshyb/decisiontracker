@@ -1,9 +1,6 @@
 package com.prathamesh.decisiontracker.service;
 
-import com.prathamesh.decisiontracker.dto.CreateTagDTO;
-import com.prathamesh.decisiontracker.dto.DecisionDTO;
-import com.prathamesh.decisiontracker.dto.TagDTO;
-import com.prathamesh.decisiontracker.dto.UpdateTagDTO;
+import com.prathamesh.decisiontracker.dto.*;
 
 import java.util.List;
 
@@ -20,4 +17,10 @@ public interface TagService {
     void deleteTag(Integer tagId) throws Exception;
 
     List<DecisionDTO> getTagDecisions(Integer tagId) throws Exception;
+
+    List<TopTagDTO> getTopTags();
+
+    List<TagScoreDTO> getAverageScorePerTag();
+
+
 }

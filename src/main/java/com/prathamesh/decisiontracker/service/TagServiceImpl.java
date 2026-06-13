@@ -1,5 +1,6 @@
 package com.prathamesh.decisiontracker.service;
 
+import com.prathamesh.decisiontracker.constants.TagConstants;
 import com.prathamesh.decisiontracker.dto.*;
 import com.prathamesh.decisiontracker.entities.Tag;
 import com.prathamesh.decisiontracker.exception.DuplicateEntryException;
@@ -68,4 +69,22 @@ public class TagServiceImpl implements TagService {
         Tag tag = tagRepository.findById(tagId).orElseThrow(() -> new ResourceNotFoundException("Tag", tagId));
         return tag.getDecisions().stream().map(decisionMapper::toDTO).toList();
     }
+
+    @Override
+    public List<TopTagDTO> getTopTags() {
+        return tagRepository.getTopTags(TagConstants.MINIMUM_USAGE_COUNT)
+                .stream()
+                .map(tagMapper::toTopTagDTO)
+                .toList();
+    }
+
+    @Override
+    public List<TagScoreDTO> getAverageScorePerTag() {
+//    return tagRepository.getAverageScorePerTag()
+//            .stream()
+//            .map(tagMapper::toTagScoreDTO)
+//            .toList();
+    return tagRepository.getAvgScorePerTag();
+    }
+
 }

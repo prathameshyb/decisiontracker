@@ -3,6 +3,8 @@ package com.prathamesh.decisiontracker.dto;
 import com.prathamesh.decisiontracker.entities.Decision;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class DecisionMapper {
     public DecisionDTO toDTO(Decision decision){
@@ -17,6 +19,14 @@ public class DecisionMapper {
         decisionDTO.setActualOutCome(decision.getActualOutCome());
 
         return decisionDTO;
+    }
+
+    public BestDecisionDTO toBestDecisionDTO(Decision decision){
+        BestDecisionDTO bestDecisionDTO = new BestDecisionDTO();
+        bestDecisionDTO.setTitle(decision.getTitle());
+        bestDecisionDTO.setDescription(decision.getDescription());
+        bestDecisionDTO.setScore(decision.getScore());
+        return bestDecisionDTO;
     }
 
     public Decision toEntity(DecisionDTO decisionDTO){
@@ -54,5 +64,14 @@ public class DecisionMapper {
         decision.setActualOutCome(updateDecisionDTO.getActualOutCome());
         decision.setDecisionDate(updateDecisionDTO.getDecisionDate());
         return decision;
+    }
+
+    public DecisionDueReviewDTO toDecisionDueReviewDTO(Object[] result, int differenceDays) {
+        DecisionDueReviewDTO decisionDueReviewDTO = new DecisionDueReviewDTO();
+        decisionDueReviewDTO.setDecisionId((int)result[0]);
+        decisionDueReviewDTO.setTitle((String) result[1]);
+        decisionDueReviewDTO.setDescription((String) result[2]);
+        decisionDueReviewDTO.setPeriodOverDueDays(differenceDays);
+        return decisionDueReviewDTO;
     }
 }

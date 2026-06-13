@@ -149,4 +149,28 @@ public class DecisionTrackerRESTController {
         }
         return tagService.getTagDecisions(tagId);
     }
+
+    @GetMapping("/analytics/best-decisions")
+    @ResponseStatus(HttpStatus.OK)
+    public List<BestDecisionDTO> getBestDecisions(){
+        return decisionService.getBestDecisions();
+    }
+
+    @GetMapping("/analytics/top-tags")
+    @ResponseStatus(HttpStatus.OK)
+    public List<TopTagDTO> getTopTags(){
+         return tagService.getTopTags();
+    }
+
+    @GetMapping("/analytics/average-score-by-tag")
+    @ResponseStatus(HttpStatus.OK)
+    public List<TagScoreDTO> getAvgScorePerTag(){
+        return tagService.getAverageScorePerTag();
+    }
+
+    @GetMapping("/analytics/decisions-due-review")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DecisionDueReviewDTO> getDecisionsDueReview(){
+        return decisionService.getDecisionsDueReview();
+    }
 }

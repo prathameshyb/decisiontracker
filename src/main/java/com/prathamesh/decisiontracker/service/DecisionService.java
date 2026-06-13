@@ -1,9 +1,6 @@
 package com.prathamesh.decisiontracker.service;
 
-import com.prathamesh.decisiontracker.dto.CreateDecisionDTO;
-import com.prathamesh.decisiontracker.dto.DecisionDTO;
-import com.prathamesh.decisiontracker.dto.TagDTO;
-import com.prathamesh.decisiontracker.dto.UpdateDecisionDTO;
+import com.prathamesh.decisiontracker.dto.*;
 
 import java.util.List;
 
@@ -22,4 +19,9 @@ public interface DecisionService {
     void setDecisionTags(Integer decisionId, List<Integer> tagIds) throws Exception;
 
     List<TagDTO> getDecisionTags(Integer decisionId);
+
+    List<BestDecisionDTO> getBestDecisions();
+
+    List<DecisionDueReviewDTO> getDecisionsDueReview();
+
 }

@@ -24,7 +24,6 @@ public class Tag {
     @ManyToMany(mappedBy = "tags")
     List<Decision>decisions;
 
-
     public Tag(){}
 
     public Tag(int tagId, String tagName) {

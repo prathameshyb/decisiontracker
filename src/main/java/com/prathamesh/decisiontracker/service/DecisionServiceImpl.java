@@ -1,5 +1,7 @@
 package com.prathamesh.decisiontracker.service;
 
+import com.prathamesh.decisiontracker.constants.DecisionConstants;
+import com.prathamesh.decisiontracker.constants.TagConstants;
 import com.prathamesh.decisiontracker.dto.*;
 import com.prathamesh.decisiontracker.entities.Decision;
 import com.prathamesh.decisiontracker.entities.Tag;
@@ -10,10 +12,17 @@ import com.prathamesh.decisiontracker.repository.TagRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -94,4 +103,36 @@ public class DecisionServiceImpl implements DecisionService {
         Decision decision = decisionRepository.findById(decisionId).orElseThrow(() -> new ResourceNotFoundException("Decision", decisionId));
         return decision.getDecisionTags().stream().map(tagMapper::toDTO).toList();
     }
+
+    @Override
+    public List<BestDecisionDTO> getBestDecisions() {
+        return decisionRepository.getBestDecisions(DecisionConstants.MINIMUM_SCORE_FOR_BEST_DECISION).stream().map(decisionMapper::toBestDecisionDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DecisionDueReviewDTO> getDecisionsDueReview() {
+        List<DecisionDueReviewDTO> decisionsOverDueForReview = new ArrayList<>();
+        List<Object[]> decisionsReviewDetails = decisionRepository.getDecisionReviewDetails();
+        for(Object[] decisionDetails : decisionsReviewDetails) {
+            if (decisionDetails[3] != null) {
+                LocalDate decisionDate =
+                        ((Date) decisionDetails[3])
+                                .toInstant()
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate();
+
+                LocalDate reviewDate =
+                        decisionDate.plusDays((Integer) decisionDetails[4]);
+
+                if (reviewDate.isBefore(LocalDate.now())) {
+                    int differenceOfDays = (int)ChronoUnit.DAYS.between(reviewDate, LocalDate.now());
+                    decisionsOverDueForReview.add(decisionMapper.toDecisionDueReviewDTO(decisionDetails, differenceOfDays));
+                }
+            }
+        }
+        return decisionsOverDueForReview;
+
+    }
+
+
 }
