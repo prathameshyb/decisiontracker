@@ -55,7 +55,6 @@ public class UserServiceImpl implements UserService{
         for (Integer decisionId : decisionIds) {
             Decision decision = decisionRepository.findById(decisionId).orElseThrow(() -> new ResourceNotFoundException("Decision", decisionId));
             decision.setUser(user);
-            decisionRepository.save(decision);
         }
     }
 

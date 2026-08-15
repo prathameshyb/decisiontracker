@@ -5,6 +5,7 @@ import com.prathamesh.decisiontracker.exception.ResourceNotFoundException;
 import com.prathamesh.decisiontracker.service.DecisionService;
 import com.prathamesh.decisiontracker.service.TagService;
 import com.prathamesh.decisiontracker.service.UserService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -105,6 +106,7 @@ public class DecisionTrackerRESTController {
         }
     }
 
+    @Transactional
     @PostMapping("/userDecisions/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public void setUserDecisions(@PathVariable(name = "userId", required = true)Integer userId,@RequestBody List<Integer> decisionIds) throws Exception{
