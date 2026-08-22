@@ -1,5 +1,8 @@
 package com.prathamesh.decisiontracker.security;
 
+import com.prathamesh.decisiontracker.entities.Admin;
+import com.prathamesh.decisiontracker.repository.AdminRepository;
+import com.prathamesh.decisiontracker.repository.UserRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,11 +12,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return User.builder()
-                .username("user")
-                .password("$2a$08$ENBokBnT2hfLroF2SgoyF./u353F3G7edV4nxUB98eLnUlEEWY7eS")
-                .build();
+    private final AdminRepository adminRepository;
+
+    public CustomUserDetailsService(AdminRepository adminRepository) {
+        this.adminRepository = adminRepository;
     }
+
+    @Override
+    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+
+//        return User.builder()
+//                .username(admin.getUsername())
+//                .password(admin.getPassword())
+//                .build();
+        return adminRepository.findByAdminName(userName).orElseThrow(() -> new UsernameNotFoundException("Admin not found"));
+    }
+
 }
