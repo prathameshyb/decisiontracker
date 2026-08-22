@@ -8,6 +8,11 @@ import com.prathamesh.decisiontracker.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +29,10 @@ public class DecisionTrackerRESTController {
     @Autowired
     private final TagService tagService;
 
+    private SecurityContext context;
+
+    private Authentication auth;
+
 
     public DecisionTrackerRESTController(DecisionService decisionService, UserService userService, TagService tagService){
         this.decisionService = decisionService;
@@ -31,26 +40,40 @@ public class DecisionTrackerRESTController {
         this.tagService = tagService;
     }
 
+    public void checkAdminAccess(){
+        context = SecurityContextHolder.getContext();
+        auth = context.getAuthentication();
+        SimpleGrantedAuthority adminAuthority = new SimpleGrantedAuthority("ROLE_ADMIN");
+        if (auth != null && !auth.getAuthorities().contains(adminAuthority) ) {
+            throw new AccessDeniedException("Action denied for this admin");
+        }
+    }
+
     @GetMapping("/users")
     List<UserDTO> getUsers(){
+        checkAdminAccess();
         return userService.getUsers();
+
     }
 
     @PostMapping("/user")
     @ResponseStatus(HttpStatus.CREATED)
     public void newUser(@RequestBody CreateUserDTO newUserDTO) throws Exception {
+        checkAdminAccess();
         userService.addUser(newUserDTO);
     }
 
     @PutMapping("/user")
     @ResponseStatus(HttpStatus.OK)
     public void updateUser(@RequestBody UpdateUserDTO updateUserDTO) throws Exception {
+        checkAdminAccess();
         userService.updateUser(updateUserDTO);
     }
 
     @DeleteMapping("/users")
     @ResponseStatus(HttpStatus.OK)
     public void deleteUsers(@RequestBody List<Integer>userIds) throws Exception{
+        checkAdminAccess();
         for(Integer userId : userIds){
             userService.deleteUser(userId);
         }

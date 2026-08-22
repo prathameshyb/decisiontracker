@@ -23,12 +23,14 @@ public class Admin implements UserDetails {
     private String password;
 
 
+    private String authorityString;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
-        return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
-
+        if (authorityString == null || authorityString.isBlank())
+            return List.of();
+        return AuthorityUtils.commaSeparatedStringToAuthorityList(authorityString);
     }
 
     @Override
