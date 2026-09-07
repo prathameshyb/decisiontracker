@@ -2,6 +2,7 @@ package com.prathamesh.decisiontracker.mvc;
 
 import com.prathamesh.decisiontracker.dto.*;
 import com.prathamesh.decisiontracker.exception.ResourceNotFoundException;
+import com.prathamesh.decisiontracker.security.JwtService;
 import com.prathamesh.decisiontracker.service.DecisionService;
 import com.prathamesh.decisiontracker.service.TagService;
 import com.prathamesh.decisiontracker.service.UserService;
@@ -29,15 +30,19 @@ public class DecisionTrackerRESTController {
     @Autowired
     private final TagService tagService;
 
+    @Autowired
+    private final JwtService jwtService;
+
     private SecurityContext context;
 
     private Authentication auth;
 
 
-    public DecisionTrackerRESTController(DecisionService decisionService, UserService userService, TagService tagService){
+    public DecisionTrackerRESTController(DecisionService decisionService, UserService userService, TagService tagService, JwtService jwtService){
         this.decisionService = decisionService;
         this.userService = userService;
         this.tagService = tagService;
+        this.jwtService = jwtService;
     }
 
     public void checkAdminAccess(){
@@ -197,5 +202,13 @@ public class DecisionTrackerRESTController {
     @ResponseStatus(HttpStatus.OK)
     public List<DecisionDueReviewDTO> getDecisionsDueReview(){
         return decisionService.getDecisionsDueReview();
+    }
+
+    @GetMapping("/auth/generateToken")
+    @ResponseStatus(HttpStatus.OK)
+    public String generateJWTToken(){
+        context = SecurityContextHolder.getContext();
+        auth = context.getAuthentication();
+        return jwtService.getJwtToken(auth.getName());
     }
 }

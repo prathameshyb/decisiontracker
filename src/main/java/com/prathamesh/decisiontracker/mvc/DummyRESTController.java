@@ -1,6 +1,8 @@
 package com.prathamesh.decisiontracker.mvc;
 
 
+import com.prathamesh.decisiontracker.security.JwtService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,6 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class DummyRESTController {
 
+    @Autowired
+    private final JwtService jwtService;
+
+    public DummyRESTController(JwtService jwtService) {
+        this.jwtService = jwtService;
+    }
 
 
     @GetMapping("/who-am-i")
